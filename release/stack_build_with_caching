@@ -1,0 +1,56 @@
+echo "BUILD STARTED"
+set -e # exit on error
+
+mkdir "$out" # build output goes here
+
+# prevent masking write permissions
+umask 0000
+
+# set necessary folders that stack uses
+export HOME=/tmp/stack_home
+mkdir -p "$HOME"
+
+export STACK_ROOT=~/.stack
+mkdir -p "$STACK_ROOT"
+
+# allow stack to create nested folders
+echo "COPYING REPO SOURCE"
+cp -r "$src"/ _src
+chmod -R 777 _src
+cd _src
+
+# create cache dirs to cache .stack-work per branch
+export STACK_WORK_DIR=~/stack-work-dir-$PR_ID
+export STACK_WORK_MASTER_DIR=~/stack-work-dir-master
+
+# if there is no branch folder, copy .stack-work from master
+if [[ ! -d "$STACK_WORK_DIR" ]]; then
+  mkdir -p "$STACK_WORK_MASTER_DIR"
+  mkdir -p "$STACK_WORK_DIR"
+
+  # if this branch is not master
+  if [[ ! "$STACK_WORK_DIR" == "$STACK_WORK_MASTER_DIR" ]]; then
+    echo "COPYING .stack-work FROM MASTER TO THIS BRANCH CACHE"
+    cp -r "$STACK_WORK_MASTER_DIR"/. "$STACK_WORK_DIR"
+  fi
+fi
+
+# copy cached .stack-work
+echo "COPYING .stack-work FROM CACHE"
+cp -r "$STACK_WORK_DIR"/. .
+
+# payload
+echo "STACK BUILD AND TEST:"
+
+stack test                    `# same as stack build --test` \
+   --allow-different-user     `# we changed HOME` \
+   --nix                      `# nix integration` \
+   --fast                     `# skip optimization`
+
+echo "STACK BUILD AND TEST DONE"
+
+# make logs visible in build output
+echo 'STACK LOGS (.stack-work/logs/ale-core*.log):'
+cat .stack-work/logs/ale-core*.log
+
+eval "$CACHE_STACK_WORK_DIRS"

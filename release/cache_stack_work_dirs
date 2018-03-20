@@ -1,0 +1,10 @@
+# cache .stack-work dirs
+echo "CACHING ALL .stack-work DIRECTORIES"
+
+# chmod is important for copied files that inherited non write permissions
+chmod -R 777 .
+cp -r .stack-work "$STACK_WORK_DIR"
+cp -r --parents core/.stack-work "$STACK_WORK_DIR"
+cp -r --parents node/.stack-work "$STACK_WORK_DIR"
+cp -r --parents hub/.stack-work "$STACK_WORK_DIR"
+echo "CACHED .stack-work DIRECTORIES"

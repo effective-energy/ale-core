@@ -1,0 +1,236 @@
+_common/lib: !include "../common/lib.yaml"
+
+name:               ale-core-node
+synopsis:           ALE - node
+description:        ALE - node
+<<:                 *meta
+
+default-extensions: *def-ext
+dependencies:       *common-deps
+
+library:
+  source-dirs: src
+
+  dependencies:
+    - QuickCheck
+    - aeson
+    - ale-core-core         == 0.1.0.0
+    - ale-core-tools-common == 0.1.0.0
+    - async
+    - async-combinators
+    - bytestring
+    - concurrent-extra
+    - conduit
+    - containers
+    - cryptonite
+    - data-default
+    - directory
+    - fmt
+    - generic-deriving
+    - hashable
+    - focus
+    - hashable
+    - insert-ordered-containers
+    - lens
+    - list-t
+    - log-warper
+    - memory
+    - mtl
+    - network
+    - network-transport
+    - network-transport-tcp
+    - resourcet
+    - rocksdb-haskell
+    - serialise
+    - serokell-util
+    - servant
+    - servant-client
+    - servant-generic
+    - servant-server
+    - servant-swagger
+    - swagger2
+    - stm
+    - stm-containers   >= 0.2.16
+    - text
+    - transformers
+    - transformers-base
+    - unliftio
+    - unordered-containers
+    - wai
+    - yaml
+
+executables:
+
+  ale-job:
+    <<:          *exec-common
+    main:        Main.hs
+    source-dirs: tools/job
+
+    dependencies:
+      - ale-core-core
+      - ale-core-node
+      - ale-core-tools-common
+
+      - aeson
+      - bytestring
+      - data-default
+      - lens
+      - log-warper
+      - mtl
+      - optparse-applicative
+      - serialise
+      - stm
+      - time
+      - unordered-containers
+
+  ale-monitor:
+    <<:          *exec-common
+    main:        Main.hs
+    source-dirs: tools/monitor
+
+    dependencies:
+      - ale-core-node
+      - ale-core-core
+      - ale-core-tools-common
+      - data-default
+      - log-warper
+      - optparse-applicative
+      - stm
+      - unordered-containers
+
+  ale-ping:
+    <<:          *exec-common
+    main:        Main.hs
+    source-dirs: tools/ping
+
+    dependencies:
+      - ale-core-node
+      - ale-core-core
+      - aeson-pretty
+      - log-warper
+      - optparse-applicative
+      - unordered-containers
+
+  ale-node:
+    <<:          *exec-common
+    main:        Main.hs
+    source-dirs: main
+
+    dependencies:
+      - ale-core-node
+      - ale-core-core
+      - ale-core-tools-common
+      - data-default
+      - log-warper
+      - mtl
+      - network
+      - optparse-applicative
+      - servant-server
+      - unliftio
+      - warp
+
+  ale-node-api:
+    <<:          *exec-common
+    main:        Main.hs
+    source-dirs: tools/node-api
+
+    dependencies:
+      - aeson-pretty
+
+      - ale-core-node
+      - ale-core-tools-common
+
+  ale-transfer-rest:
+    <<:          *exec-common
+    main:        Main.hs
+    source-dirs: tools/transfer-rest
+
+    dependencies:
+      - ale-core-core
+      - ale-core-node
+      - ale-core-tools-common
+      - cryptonite
+      - data-default
+      - http-client
+      - log-warper
+      - optparse-applicative
+      - servant
+      - servant-client == 0.12
+
+  ale-pong:
+    <<:          *exec-common
+    main:        Main.hs
+    source-dirs: tools/pong
+
+    dependencies:
+      - ale-core-node
+      - ale-core-core
+      - aeson-pretty
+      - log-warper
+      - optparse-applicative
+      - stm
+      - unordered-containers
+
+  ale-transfer:
+    <<:          *exec-common
+    main:        Main.hs
+    source-dirs: tools/transfer
+
+    dependencies:
+      - ale-core-core
+      - ale-core-node
+      - ale-core-tools-common
+      - cryptonite
+      - data-default
+      - log-warper
+      - optparse-applicative
+      - servant
+      - stm
+      - unordered-containers
+
+  ale-storage-example:
+    <<:          *exec-common
+    main:        Storage.hs
+    source-dirs: tools/storage-example
+
+    dependencies:
+      - ale-core-node
+      - ale-core-core
+      - fmt
+      - log-warper
+      - optparse-applicative
+      - stm
+      - unliftio
+      - unordered-containers
+
+tests:
+  ale-core-node-test:
+    <<: *test-common
+
+    dependencies:
+      - HUnit
+      - hedgehog
+      - tasty
+      - tasty-discover     >= 4.1.1
+      - tasty-hedgehog
+      - tasty-hunit
+
+      - ale-core-core
+      - ale-core-node
+      - aeson
+      - async
+      - bytestring
+      - data-default
+      - conduit
+      - directory
+      - http-client
+      - lens
+      - mmorph
+      - process
+      - resourcet
+      - servant-client == 0.12
+      - servant-server == 0.12
+      - temporary
+      - transformers-base
+      - text
+      - warp

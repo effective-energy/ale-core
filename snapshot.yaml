@@ -1,0 +1,42 @@
+name: ale-snapshot
+resolver: lts-10.6
+
+packages:
+- universum-1.1.0
+- serokell-util-0.6.0
+- log-warper-1.8.9
+
+- async-combinators-0.0.0
+
+- cborg-0.1.1.0
+- serialise-0.1.0.0
+
+- rocksdb-haskell-1.0.0
+
+# for serokell-util
+- time-units-1.0.0
+
+# for log-warper
+- o-clock-0.1.0
+
+# The version on Hackage is different from GitHub
+- git: https://github.com/haskell-distributed/network-transport-tcp
+  commit: e1a51974a53561b85fdbe77c423688db7a22f69b
+
+- servant-0.12.1
+- servant-client-0.12
+- servant-server-0.12
+- servant-client-core-0.12
+
+- git: https://github.com/int-index/caps
+  commit: 858e76d8d92d683ff75f298ff39ca6b24daafaac
+
+# This brings an instance of `MonadMask` for `ExceptT`.
+# servant’s `Handler` is `ExceptT ServantErr IO` and we
+# want to be able to handle exceptions in our handlers.
+- git: https://github.com/ekmett/exceptions
+  commit: 0657cd1378d496f00543b5639b193db0d4a95164
+
+flags:
+  serialise:
+    newtime15: true

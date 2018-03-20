@@ -1,0 +1,36 @@
+rotation:                             # parameters for logger rotation
+    logLimit: 5242880                 # 5MB -- size of file in bytes
+    keepFiles: 20                     # max number of files to keep
+termSeveritiesErr: All                # for console output
+loggerTree:
+    severity: Debug+                  # severity for "root" logger
+    ale-genesis:                      # logger named "ale-genesis"
+        severity: Info+               # severity for logger "ale-genesis"
+    ale-distribute:                   # logger named "ale-distribute"
+        severity: Debug+              # severity for logger "ale-distribute"
+        file: logs/ale-distribute.log # messages for "ale-distribute" will be sent to ale-distribute.log
+    ale-hub:
+        severity: Debug+
+        file: logs/ale-hub.log
+    ale-node:                         # logger named "ale-node"
+        severity: Debug+              # severity for logger "ale-node"
+        file: logs/ale-node.log       # messages for "ale-node" will be sent to ale-node.log
+    ale-wallet:
+        severity: Debug+
+        file: logs/ale-wallet.log
+    ale-node-ping:                    # logger named "ale-node-ping"
+        severity: Debug+              # severity for logger "ale-node-ping"
+    ale-node-pong:                    # logger named "ale-node-pong"
+        severity: Debug+              # severity for logger "ale-node-pong"
+    ale-node-storage:
+        severity: Debug+
+    ale-transfer-tool:
+        severity: Debug+
+    ale-job-offer:                    # logger named "ale-job-offer"
+        severity: Debug+              # severity for logger "ale-job-offer"
+    ale-job-propose:                  # logger named "ale-job-propose"
+        severity: Debug+              # severity for logger "ale-job-propose"
+    ale-job-submit:                   # logger named "ale-job-submit"
+        severity: Debug+              # severity for logger "ale-job-submit"
+    ale-job-accept:                   # logger named "ale-job-accept"
+        severity: Debug+              # severity for logger "ale-job-accept"

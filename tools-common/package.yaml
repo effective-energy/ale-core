@@ -1,0 +1,89 @@
+_common/lib: !include "../common/lib.yaml"
+
+name:               ale-core-tools-common
+synopsis:           ALE - tools-common
+description:        ALE - tools-common
+<<:                 *meta
+
+default-extensions: *def-ext
+dependencies:       *common-deps
+
+library:
+  source-dirs: src
+
+  dependencies:
+    - aeson
+    - aeson-pretty
+    - ale-core-core
+    - bytestring
+    - directory
+    - filepath
+    - fmt
+    - log-warper
+    - optparse-applicative
+    - safe-exceptions
+    - text-format
+
+executables:
+  ale-keychain:
+    main:        Main.hs
+    source-dirs: tools/keychain
+    <<:          *exec-common
+
+    dependencies:
+      - ale-core-core
+      - ale-core-tools-common
+      - cryptonite
+      - log-warper
+      - optparse-applicative
+
+  ale-distribute:
+    main:        Main.hs
+    source-dirs: tools/distribute
+    <<:          *exec-common
+
+    dependencies:
+      - aeson-pretty
+      - ale-core-core
+      - ale-core-tools-common
+      - cryptonite
+      - log-warper
+      - optparse-applicative
+
+  ale-genesis:
+    main:        Main.hs
+    source-dirs: tools/genesis
+    <<:          *exec-common
+
+    dependencies:
+      - aeson
+      - aeson-pretty
+      - ale-core-core
+      - ale-core-tools-common
+      - bytestring
+      - data-default
+      - fmt
+      - log-warper
+      - optparse-applicative
+
+  ale-path:
+    main:        Main.hs
+    source-dirs: tools/path
+    <<:          *exec-common
+
+    dependencies:
+      - ale-core-core
+      - ale-core-tools-common
+      - optparse-applicative
+
+  ale-keygen:
+    main:        Main.hs
+    source-dirs: tools/keygen
+    <<:          *exec-common
+
+    dependencies:
+      - ale-core-core
+      - bytestring
+      - cryptonite
+      - log-warper
+      - optparse-applicative

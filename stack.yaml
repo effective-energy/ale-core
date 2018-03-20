@@ -1,0 +1,18 @@
+resolver: snapshot.yaml
+
+packages:
+- core
+- hub
+- node
+- wallet
+- tools-common
+
+ghc-options:
+  "$locals": -Wall
+
+nix:
+  shell-file: shell-stack.nix
+
+# We need `exceptions` from master while `errors`, which we depend on
+# transitively, has an upper bound.
+allow-newer: true

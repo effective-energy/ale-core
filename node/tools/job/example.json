@@ -1,0 +1,11 @@
+{
+    "description": "Nebolshaya halturka..",
+    "deadline": "2020-11-19 18:00:00 UTC",
+    "requirements": {
+        "op": "const",
+        "value": true
+    },
+    "tokens": {
+        "$@": 2
+    }
+}

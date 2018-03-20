@@ -1,0 +1,65 @@
+_common/lib: !include "../common/lib.yaml"
+
+name:               ale-core-hub
+synopsis:           ALE - hub
+description:        ALE - hub
+<<:                 *meta
+
+default-extensions: *def-ext
+dependencies:       *common-deps
+
+library:
+  source-dirs: src
+
+  dependencies:
+    - ale-core-core    == 0.1.0.0
+    - ale-core-node    == 0.1.0.0
+
+    - bytestring
+    - containers
+    - fmt
+    - lens
+    - log-warper
+    - monad-control
+    - mtl
+    - serialise
+    - serokell-util
+    - stm
+    - stm-containers
+    - unliftio
+
+executables:
+  ale-hub:
+    main:        Hub.hs
+    source-dirs: main
+    <<:          *exec-common
+
+    dependencies:
+      - ale-core-hub
+      - ale-core-core
+      - ale-core-node
+      - ale-core-tools-common
+      - aeson
+      - aeson-pretty
+      - bytestring
+      - cryptonite
+      - fmt
+      - log-warper
+      - mtl
+      - optparse-applicative
+      - stm
+      - unordered-containers
+
+tests:
+  ale-core-hub-test:
+    <<: *test-common
+
+    dependencies:
+      - HUnit
+      - hedgehog
+      - tasty
+      - tasty-discover >=4.1.1
+      - tasty-hedgehog
+      - tasty-hunit
+
+      - ale-core-core

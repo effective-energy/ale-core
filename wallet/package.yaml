@@ -1,0 +1,101 @@
+_common/lib: !include "../common/lib.yaml"
+
+name:               ale-core-wallet
+synopsis:           ALE - wallet
+description:        ALE - wallet
+<<:                 *meta
+
+default-extensions: *def-ext
+dependencies:       *common-deps
+
+library:
+  source-dirs: src
+
+  dependencies:
+    - aeson
+    - ale-core-core         == 0.1.0.0
+    - ale-core-tools-common == 0.1.0.0
+    - ale-core-node         == 0.1.0.0
+    - async
+    - conduit
+    - containers
+    - data-default
+    - cryptonite
+    - http-api-data
+    - insert-ordered-containers
+    - lens
+    - http-api-data
+    - lens
+    - log-warper
+    - mtl
+    - resourcet
+    - safe-exceptions
+    - serialise
+    - servant
+    - servant-generic
+    - servant-server
+    - servant-swagger
+    - swagger2
+    - time
+    - wai
+    - yaml
+
+tests:
+  ale-core-wallet-test:
+    <<: *test-common
+
+    dependencies:
+      - HUnit
+      - hedgehog
+      - tasty
+      - tasty-discover     >= 4.1.1
+      - tasty-hedgehog
+      - tasty-hunit
+
+      - ale-core-core
+      - ale-core-node
+      - ale-core-wallet
+
+executables:
+  ale-wallet:
+    <<:          *exec-common
+    main:        Main.hs
+    source-dirs: main
+
+    dependencies:
+      - ale-core-core
+      - ale-core-node
+      - ale-core-wallet
+      - ale-core-tools-common
+      - data-default
+      - lens
+      - log-warper
+      - mtl
+      - network
+      - optparse-applicative
+      - unliftio
+      - warp
+
+  ale-wallet-api:
+    <<:          *exec-common
+    main:        Main.hs
+    source-dirs: tools/api
+
+    dependencies:
+      - ale-core-core
+      - ale-core-node
+      - ale-core-wallet
+      - ale-core-tools-common
+      - bytestring
+      - filepath
+      - lens
+      - log-warper
+      - mtl
+      - serialise
+      - servant
+      - servant-generic
+      - servant-server
+      - servant-swagger
+      - swagger2
+      - wai
+      - warp

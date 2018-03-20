@@ -1,0 +1,33 @@
+# This is a imitation of `nix-build release.nix` command
+# Unlike the nix-build command, this is suitable for testing
+# since all nix store hashes are replaced with given fake paths
+# and during build current env is used (not replaced with pure env)
+
+# USAGE
+# - Specify BUILD_DIR. With nix-build, this is: /tmp/nix-build-ale-stack-test.drv-<build_index>.
+# - Specify PR_ID. This is used for naming caching dir.
+set -e
+
+me="$(basename "$(test -L "$0" && readlink "$0" || echo "$0")")"
+
+if [[ -n "$1" && -n "$2" ]]; then
+  BUILD_DIR="$1"
+  PR_ID="$2"
+else
+  echo "Usage:   $me <dir-to-run-the-build-in> <branch-name-for-caching>"
+  echo "Example: $me /tmp/nix-build-fake-0 \"master\" "
+  exit 1;
+fi
+
+src="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )/.."
+out="/tmp/store-fake/out-ale-core"
+if [[ -f $out || -d $out ]]; then
+  echo "Directory/file \$out=$out already exists. Removing \$out."
+  rm "$out" -r
+fi
+
+CACHE_STACK_WORK_DIRS="$(cat "$src"/release/cache_stack_work_dirs)"
+mkdir -p "$BUILD_DIR"
+cd "$BUILD_DIR"
+source "$src"/release/stack_build_with_caching
+rm "$out" -r #remove build's $out
