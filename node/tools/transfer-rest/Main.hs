@@ -3,6 +3,7 @@ module Main where
 import Universum
 
 import Crypto.Random (MonadRandom, getRandomBytes)
+import Data.Default (def)
 import Data.Word (Word16)
 import Network.HTTP.Client (defaultManagerSettings, newManager)
 import Options.Applicative (Parser, argument, auto, execParser, fullDesc, help, helper, info, long,
@@ -85,7 +86,9 @@ run Config{..} = do
                     Nothing -> pure Money
                     Just i  -> Transferable <$> resolveKey i kc
             challenge <- getRandomBytes 32
-            let msg = transfer sk (T.fromList [(issuer, mCount)]) to challenge
+            -- FIXME Передаём дефолтное значение высоты блока (def).
+            -- Оно нулевое, и скорее всего этот блок не будет приниматься.
+            let msg = transfer sk def (T.fromList [(issuer, mCount)]) to challenge
             res <- liftIO $ runClientM (nmPost (nMessage node) msg) clientEnv
             case res of
                 Left e          -> logError (show e) >> exitFailure

@@ -1,0 +1,4 @@
+/db
+/logs
+/node/logs
+*.cabal

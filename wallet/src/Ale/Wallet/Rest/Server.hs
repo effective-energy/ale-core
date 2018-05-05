@@ -31,7 +31,7 @@ import Ale.Node.Context.Logging (Logging)
 import Ale.Node.Context.Mining (Mining, MonadMining (mine))
 import Ale.Node.Rest.Server (AsServerWithEnv, nodeServer')
 import Ale.State (AleState, AleStateData, asdActiveProposals, asdSubmissionsByProposal,
-                  asdWaitingSubmissions, getASDataOrError)
+                  asdWaitingSubmissions, getASDataOrError, getASHeightOrError)
 import Ale.Transactions (transfer)
 import Ale.Wallet.Rest.Api (Api, Wallet (..), WalletRoot (..))
 import Ale.Wallet.State (MonadWalletState (..), WalletState)
@@ -75,8 +75,10 @@ walletServer' = WalletRoot {..}
                     sk <- getWSSecret pk >>= unEither404
                     logDebug $ "Secret key for "+|pk|+" found"
                     challenge <- getRandomBytes 32
+                    height <- getASHeightOrError
                     let msg = transfer
                                   sk
+                                  height
                                   (T.fromList [(T.Money, amount)])
                                   receiver
                                   challenge
