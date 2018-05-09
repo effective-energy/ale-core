@@ -18,7 +18,7 @@ import Ale.Log (setupAleLoggingWithName)
 import Ale.Node (foreverBlocks)
 import Ale.Node.Context.Mining (MonadMining (..))
 import Ale.Node.Startup (Components (..), withNode)
-import Ale.State (asdOpenOffers, getASBlockOrError, getASDataOrError)
+import Ale.State (asdOpenOffers, getASBlockOrError, getASDataOrError, getASHeightOrError)
 import Ale.Tools.Keychain (ParsableKey (..), loadKeychain)
 import Ale.Tools.Options (keychainOption, nodeConfigOption)
 import Ale.Tools.Paths (getDataDir)
@@ -88,7 +88,8 @@ run Config{..} = withNode cNodeConfig def $ \(Components bcc) -> do
                 Just issuer' -> T.Transferable <$> resolveKey issuer' kc
 
             challenge <- liftIO $ getRandomBytes 32
-            let env = transfer sk (T.fromList [(tkind, cnt)]) to challenge
+            height <- getASHeightOrError
+            let env = transfer sk height (T.fromList [(tkind, cnt)]) to challenge
             mine env
 
         Receive sk'                  -> do

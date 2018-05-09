@@ -16,7 +16,9 @@ import Control.Monad.Except (Except, MonadError, runExcept, throwError)
 import Ale.Core.Crypto (SecretKey, sign, toPublic)
 import Ale.Core.Crypto.Signed (Signed, mkSigned)
 import Ale.Core.Entity (Entity)
-import Ale.Core.Message (ContractorProposal (..), JobOffer, Message (..), MessagePointer,
+import Ale.Core.Height (Height)
+import Ale.Core.Message (ContractorProposal (..), JobOffer, joHeight,
+                         Message (..), MessagePointer,
                          joRequirements, jobOffer)
 import Ale.Core.Requirements (Proof (..), ReqByteString (..), ReqProof, Reqs (..), Requirements)
 import Ale.Core.Submission.Acceptance (facile)
@@ -29,11 +31,14 @@ import qualified Data.ByteString.Lazy as BSL
 -- dummy 'JobOffer' with no deadline, no acceptance testing and
 -- Contractor Requirements requiring a signature to accept money.
 transfer :: SecretKey   -- ^ Secret key of the sender
+         -> Height      -- ^ Current block height
          -> Tokens      -- ^ Amount of tokens sending now
          -> Entity      -- ^ Recepient
          -> ByteString  -- ^ Bytes that the receiver will have to sign
          -> Signed Message
-transfer sk what whom challenge = mkSigned sk . MsgJobOffer $ jobOffer
+transfer sk height what whom challenge = mkSigned sk . MsgJobOffer
+        $ set joHeight height
+        $ jobOffer
     Nothing       -- No JobDescription TODO description
     Nothing       -- No deadline
     what          -- Tokens to transfer
