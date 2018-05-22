@@ -25,7 +25,7 @@ import Ale.Core.Tokens (TokenCount)
 import Ale.Node.Rest.Api (Node)
 import Ale.Node.Rest.Instances ()
 import Ale.Wallet.Rest.Instances ()
-import Ale.Wallet.Types (Transaction, WalletInfo)
+import Ale.Wallet.Types (Transaction, WalletInfo, WalletInfoSecret)
 
 import qualified Ale.Wallet.FrontendMessage as Frontend (JobOffer)
 
@@ -40,7 +40,7 @@ data WalletRoot route = WalletRoot
     , _wrNewWallet :: route
         :- Summary "Create a new wallet"
         :> "newWallet"
-        :> PostCreated '[JSON] WalletInfo
+        :> PostCreated '[JSON] WalletInfoSecret
     , _wrImportWallet :: route
         :- Summary "Import an existing wallet"
         :> "importWallet"

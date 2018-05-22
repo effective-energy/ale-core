@@ -35,7 +35,7 @@ import Ale.State (AleState, AleStateData, asdActiveProposals, asdSubmissionsByPr
 import Ale.Transactions (transfer)
 import Ale.Wallet.Rest.Api (Api, Wallet (..), WalletRoot (..))
 import Ale.Wallet.State (MonadWalletState (..), WalletState)
-import Ale.Wallet.Types (Transaction (..), WalletInfo (..))
+import Ale.Wallet.Types (Transaction (..), WalletInfo (..), WalletInfoSecret (..))
 
 import qualified Ale.Core.Tokens as T
 import qualified Ale.State.MessageSet as MS
@@ -51,7 +51,13 @@ walletServer' = WalletRoot {..}
   where
     _wrNode = toServant nodeServer'
 
-    _wrNewWallet = liftIO generateSecretKey >>= _wrImportWallet
+    _wrNewWallet = do
+        sk <- liftIO generateSecretKey
+        WalletInfo {..} <- _wrImportWallet sk
+        pure WalletInfoSecret
+            { wisPublicKey = wiPublicKey
+            , wisSecretKey = sk
+            }
 
     _wrImportWallet sk = do
         initWS sk
