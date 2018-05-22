@@ -17,7 +17,7 @@ import Ale.Core.Requirements (Requirements)
 import Ale.Core.Tokens (TokenCount)
 import Ale.Node.Rest.Instances (base64Data)
 import Ale.Wallet.FrontendMessage (JobOffer)
-import Ale.Wallet.Types (Transaction, WalletInfo)
+import Ale.Wallet.Types (Transaction, WalletInfo, WalletInfoSecret)
 
 
 ----
@@ -57,5 +57,7 @@ instance ToSchema JobOffer where
 ----
 
 instance ToSchema WalletInfo
+
+instance ToSchema WalletInfoSecret
 
 instance ToSchema Transaction

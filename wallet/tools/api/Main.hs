@@ -30,6 +30,7 @@ import Ale.Model (AcceptSubmissionResult (..), ModelAle (..), SubmitSubmissionRe
 import Ale.Node.Rest.Api (Node (..), NodeMessage (..), NodeState (..), NodeStorage (..))
 import Ale.Tools.Paths (getDataDir)
 import Ale.Wallet.Rest.Api (Api, Wallet (..), WalletRoot (..))
+import Ale.Wallet.Types (WalletInfo (..), WalletInfoSecret (..))
 
 import qualified Data.ByteString.Lazy as BSL (readFile, writeFile)
 
@@ -105,7 +106,14 @@ walletServer = toServant (WalletRoot{..} :: WalletRoot AsWalletServer)
 
             nsProposalSubmissions _ = throwError err501
 
-    _wrNewWallet = liftIO generateSecretKey >>= _wrImportWallet
+    _wrNewWallet = do
+        sk <- liftIO generateSecretKey
+        WalletInfo {..} <- _wrImportWallet sk
+        pure WalletInfoSecret
+            { wisPublicKey = wiPublicKey
+            , wisSecretKey = sk
+            }
+
     _wrImportWallet = importWallet
     _wrWallets = wallets
 

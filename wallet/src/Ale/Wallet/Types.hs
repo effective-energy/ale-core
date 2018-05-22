@@ -3,6 +3,7 @@
 -- | Wallet-specific data types.
 module Ale.Wallet.Types
        ( WalletInfo (..)
+       , WalletInfoSecret (..)
        , Transaction (..)
        ) where
 
@@ -12,6 +13,7 @@ import Codec.Serialise (Serialise)
 import Data.Aeson (FromJSON, ToJSON)
 import Data.Time.Clock (UTCTime)
 
+import Ale.Core.Crypto (SecretKey(..))
 import Ale.Core.Entity (Entity)
 import Ale.Core.Storage.Types (HasPrefixTag (..), StoragePrefix (..))
 import Ale.Core.Tokens (TokenCount)
@@ -27,6 +29,17 @@ data WalletInfo = WalletInfo
 instance ToJSON WalletInfo
 
 instance FromJSON WalletInfo
+
+
+-- | Information (also secret) about a wallet managed by backend.
+data WalletInfoSecret = WalletInfoSecret
+    { wisPublicKey :: !Entity
+    , wisSecretKey :: !SecretKey
+    } deriving (Generic, Show)
+
+instance ToJSON WalletInfoSecret
+
+instance FromJSON WalletInfoSecret
 
 
 -- | Information about a token transaction.

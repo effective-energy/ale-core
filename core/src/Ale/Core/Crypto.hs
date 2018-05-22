@@ -147,6 +147,9 @@ instance ToJSON SecretKey where
     --   If you know what you are doing, use 'secretToBase64' explicitly.
     --   Sorry!
 -}
+instance ToJSON SecretKey where
+    toJSON = String . secretToBase64
+    toEncoding = text . secretToBase64
 
 instance FromJSON SecretKey where
     parseJSON = withText "SecretKey" secretFromBase64
@@ -154,6 +157,7 @@ instance FromJSON SecretKey where
 {-
 instance ToHttpApiData SecretKey where
     toUrlPiece = error "Do not do this!"
+    -- toUrlPiece = secretToBase64
 -}
 
 instance FromHttpApiData SecretKey where
