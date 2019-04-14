@@ -1,0 +1,544 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "",
+    "title": ""
+  },
+  "definitions": {
+    "Proof": {
+      "pattern": "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$",
+      "format": "byte",
+      "type": "string"
+    },
+    "Requirements": {
+      "minProperties": 1,
+      "maxProperties": 1,
+      "type": "object",
+      "description": "`RConstant` – a constant value that can be used in expressions described below.\n`RVar` – reference to an input parameter.\n`RLess` – operator `<` for integers.\n`RAnd` – logical `and` of a list of booleans.\n`RVerify` – whether the bytes are signed by a valid signature.",
+      "properties": {
+        "RConst": {
+          "$ref": "#/definitions/Constant"
+        },
+        "RSha256": {
+          "$ref": "#/definitions/Requirements"
+        },
+        "RVar": {
+          "maximum": 9223372036854776000,
+          "minimum": -9223372036854776000,
+          "type": "integer"
+        },
+        "REqBs": {
+          "minItems": 2,
+          "items": [
+            {
+              "$ref": "#/definitions/Requirements"
+            },
+            {
+              "$ref": "#/definitions/Requirements"
+            }
+          ],
+          "maxItems": 2,
+          "type": "array"
+        },
+        "RVerify": {
+          "minItems": 3,
+          "items": [
+            {
+              "$ref": "#/definitions/Requirements"
+            },
+            {
+              "$ref": "#/definitions/Requirements"
+            },
+            {
+              "$ref": "#/definitions/Requirements"
+            }
+          ],
+          "maxItems": 3,
+          "type": "array"
+        },
+        "RLess": {
+          "minItems": 2,
+          "items": [
+            {
+              "$ref": "#/definitions/Requirements"
+            },
+            {
+              "$ref": "#/definitions/Requirements"
+            }
+          ],
+          "maxItems": 2,
+          "type": "array"
+        },
+        "RAnd": {
+          "items": {
+            "$ref": "#/definitions/Requirements"
+          },
+          "type": "array"
+        }
+      }
+    },
+    "Signature": {
+      "pattern": "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$",
+      "example": "35MiSiEaEiZvRhQvNbpfCVmsi9zYdhzCaMCvPoX/HO4dt4TNDJ8sgNFQEydjeWkWIH7NI6q2G0TWt1NmxPbwCA==",
+      "format": "byte",
+      "type": "string"
+    },
+    "JobOffer": {
+      "required": [
+        "price",
+        "reqs",
+        "acc",
+        "extra"
+      ],
+      "type": "object",
+      "properties": {
+        "extra": {
+          "additionalProperties": {
+            "$ref": "#/definitions/Extra"
+          },
+          "type": "object"
+        },
+        "reqs": {
+          "$ref": "#/definitions/Requirements"
+        },
+        "deadline": {
+          "$ref": "#/definitions/UTCTime"
+        },
+        "price": {
+          "$ref": "#/definitions/Tokens"
+        },
+        "descr": {
+          "$ref": "#/definitions/StorageReference"
+        },
+        "acc": {
+          "$ref": "#/definitions/AcceptanceTest"
+        }
+      }
+    },
+    "AcceptanceTest": {
+      "type": "boolean"
+    },
+    "Height": {
+      "maximum": 18446744073709552000,
+      "minimum": 0,
+      "type": "integer"
+    },
+    "Signed": {
+      "required": [
+        "sPublicKey",
+        "sSignature",
+        "sData"
+      ],
+      "type": "object",
+      "properties": {
+        "sSignature": {
+          "$ref": "#/definitions/Signature"
+        },
+        "sPublicKey": {
+          "$ref": "#/definitions/PublicKey"
+        },
+        "sData": {
+          "$ref": "#/definitions/Message"
+        }
+      }
+    },
+    "RequirementsConstant": {
+      "pattern": "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$",
+      "format": "byte",
+      "type": "string"
+    },
+    "Extra": {
+      "pattern": "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$",
+      "format": "byte",
+      "type": "string"
+    },
+    "MessagePointer": {
+      "pattern": "^[a-z0-9]*$",
+      "example": "60a6dbf961241bff301d30d0cc7d7a811909eb8bc4790ab00544b492285c58ad",
+      "format": "base16",
+      "type": "string"
+    },
+    "Tokens": {
+      "type": "object",
+      "properties": {
+        "$@": {
+          "$ref": "#/definitions/TokenCount"
+        }
+      }
+    },
+    "PublicKey": {
+      "pattern": "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$",
+      "example": "WYJsP2L2883QBqEB6zKv4pD4i846QqNNREpudp5VWLY=",
+      "format": "byte",
+      "type": "string"
+    },
+    "JobDescription": {
+      "format": "binary",
+      "type": "string"
+    },
+    "EmployerAcceptance": {
+      "required": [
+        "eaSubmissionPtr"
+      ],
+      "type": "object",
+      "properties": {
+        "eaSubmissionPtr": {
+          "$ref": "#/definitions/MessagePointer"
+        }
+      }
+    },
+    "UTCTime": {
+      "example": "2016-07-22T00:00:00Z",
+      "format": "yyyy-mm-ddThh:MM:ssZ",
+      "type": "string"
+    },
+    "StorageReference": {
+      "pattern": "^[a-z0-9]*$",
+      "example": "103b512c203a303a20413b4b483d3e203c353d4f3f",
+      "format": "base16",
+      "type": "string"
+    },
+    "BlockPointer": {
+      "pattern": "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$",
+      "example": "60a6dbf961241bff301d30d0cc7d7a811909eb8bc4790ab00544b492285c58ad",
+      "format": "byte",
+      "type": "string"
+    },
+    "SubmissionData": {
+      "pattern": "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$",
+      "format": "byte",
+      "type": "string"
+    },
+    "Submission": {
+      "required": [
+        "sProposalPtr",
+        "sData",
+        "sHeight"
+      ],
+      "type": "object",
+      "properties": {
+        "sHeight": {
+          "$ref": "#/definitions/Height"
+        },
+        "sData": {
+          "$ref": "#/definitions/SubmissionData"
+        },
+        "sProposalPtr": {
+          "$ref": "#/definitions/MessagePointer"
+        }
+      }
+    },
+    "TokenCount": {
+      "example": 10,
+      "maximum": 18446744073709552000,
+      "minimum": 0,
+      "type": "integer"
+    },
+    "Message": {
+      "minProperties": 1,
+      "maxProperties": 1,
+      "type": "object",
+      "properties": {
+        "MsgContractorProposal": {
+          "$ref": "#/definitions/ContractorProposal"
+        },
+        "MsgEmployerAcceptance": {
+          "$ref": "#/definitions/EmployerAcceptance"
+        },
+        "MsgJobOffer": {
+          "$ref": "#/definitions/JobOffer"
+        },
+        "MsgSubmission": {
+          "$ref": "#/definitions/Submission"
+        }
+      }
+    },
+    "ContractorProposal": {
+      "required": [
+        "cpJobOfferPtr",
+        "cpProof"
+      ],
+      "type": "object",
+      "properties": {
+        "cpJobOfferPtr": {
+          "$ref": "#/definitions/MessagePointer"
+        },
+        "cpProof": {
+          "additionalProperties": {
+            "$ref": "#/definitions/Proof"
+          },
+          "type": "object"
+        }
+      }
+    },
+    "Constant": {
+      "minProperties": 1,
+      "maxProperties": 1,
+      "type": "object",
+      "properties": {
+        "RPublicKey": {
+          "$ref": "#/definitions/PublicKey"
+        },
+        "RSignature": {
+          "$ref": "#/definitions/Signature"
+        },
+        "RInt": {
+          "maximum": 9223372036854776000,
+          "minimum": -9223372036854776000,
+          "type": "integer"
+        },
+        "RBool": {
+          "type": "boolean"
+        },
+        "RString": {
+          "type": "string"
+        },
+        "RByteString": {
+          "$ref": "#/definitions/RequirementsConstant"
+        }
+      }
+    }
+  },
+  "paths": {
+    "/state/offers/list/open": {
+      "get": {
+        "summary": "Get a list of open job offers",
+        "responses": {
+          "200": {
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/MessagePointer"
+              },
+              "type": "array"
+            },
+            "description": ""
+          }
+        },
+        "produces": [
+          "application/json;charset=utf-8"
+        ]
+      }
+    },
+    "/message/{jobOffer}": {
+      "get": {
+        "summary": "Obtain the job offer from a pointer",
+        "responses": {
+          "404": {
+            "description": "`jobOffer` not found"
+          },
+          "200": {
+            "schema": {
+              "$ref": "#/definitions/JobOffer"
+            },
+            "description": ""
+          }
+        },
+        "produces": [
+          "application/json;charset=utf-8"
+        ],
+        "parameters": [
+          {
+            "pattern": "^[a-z0-9]*$",
+            "format": "base16",
+            "required": true,
+            "in": "path",
+            "name": "jobOffer",
+            "type": "string"
+          }
+        ]
+      }
+    },
+    "/state/submissions/list/for/{proposal}": {
+      "get": {
+        "summary": "Get a list of submissions for this contractor proposal",
+        "responses": {
+          "404": {
+            "description": "`proposal` not found"
+          },
+          "200": {
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/MessagePointer"
+              },
+              "type": "array"
+            },
+            "description": ""
+          }
+        },
+        "produces": [
+          "application/json;charset=utf-8"
+        ],
+        "parameters": [
+          {
+            "pattern": "^[a-z0-9]*$",
+            "format": "base16",
+            "required": true,
+            "in": "path",
+            "name": "proposal",
+            "type": "string"
+          }
+        ]
+      }
+    },
+    "/state/account/{account}": {
+      "get": {
+        "summary": "Get balance information for this account",
+        "responses": {
+          "404": {
+            "description": "`account` not found"
+          },
+          "200": {
+            "schema": {
+              "$ref": "#/definitions/Tokens"
+            },
+            "description": ""
+          }
+        },
+        "produces": [
+          "application/json;charset=utf-8"
+        ],
+        "parameters": [
+          {
+            "pattern": "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$",
+            "format": "byte",
+            "required": true,
+            "in": "path",
+            "name": "account",
+            "type": "string"
+          }
+        ]
+      }
+    },
+    "/state/account/{account}/{token-kind}": {
+      "get": {
+        "summary": "Get amount of these tokens for this account",
+        "responses": {
+          "404": {
+            "description": "`account` or `token-kind` not found"
+          },
+          "200": {
+            "schema": {
+              "$ref": "#/definitions/TokenCount"
+            },
+            "description": ""
+          }
+        },
+        "produces": [
+          "application/json;charset=utf-8"
+        ],
+        "parameters": [
+          {
+            "pattern": "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$",
+            "format": "byte",
+            "required": true,
+            "in": "path",
+            "name": "account",
+            "type": "string"
+          },
+          {
+            "required": true,
+            "in": "path",
+            "name": "token-kind",
+            "type": "string",
+            "enum": [
+              "$@"
+            ]
+          }
+        ]
+      }
+    },
+    "/message": {
+      "post": {
+        "summary": "Post new message",
+        "consumes": [
+          "application/json;charset=utf-8"
+        ],
+        "responses": {
+          "400": {
+            "description": "Invalid `body`"
+          },
+          "200": {
+            "description": ""
+          }
+        },
+        "produces": [
+          "application/json;charset=utf-8"
+        ],
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Signed"
+            },
+            "in": "body",
+            "name": "body"
+          }
+        ]
+      }
+    },
+    "/ping": {
+      "get": {
+        "summary": "Ping message to ensure REST works",
+        "responses": {
+          "200": {
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        },
+        "produces": [
+          "text/plain;charset=utf-8"
+        ]
+      }
+    },
+    "/storage/jobDescription": {
+      "put": {
+        "summary": "Store a new job description in the Storage",
+        "consumes": [
+          "application/octet-stream"
+        ],
+        "responses": {
+          "202": {
+            "schema": {
+              "$ref": "#/definitions/StorageReference"
+            },
+            "description": ""
+          },
+          "400": {
+            "description": "Invalid `body`"
+          }
+        },
+        "produces": [
+          "application/json;charset=utf-8"
+        ],
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/JobDescription"
+            },
+            "in": "body",
+            "name": "body"
+          }
+        ]
+      }
+    },
+    "/state/block": {
+      "get": {
+        "summary": "Get the last block pointer",
+        "responses": {
+          "200": {
+            "schema": {
+              "$ref": "#/definitions/BlockPointer"
+            },
+            "description": ""
+          }
+        },
+        "produces": [
+          "application/json;charset=utf-8"
+        ]
+      }
+    }
+  }
+}

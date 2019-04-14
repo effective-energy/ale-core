@@ -1,0 +1,1092 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "",
+    "title": ""
+  },
+  "paths": {
+    "/node/ping": {
+      "get": {
+        "summary": "Ping message to ensure REST works",
+        "produces": [
+          "text/plain;charset=utf-8"
+        ],
+        "responses": {
+          "200": {
+            "schema": {
+              "type": "string"
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/node/message": {
+      "post": {
+        "summary": "Post new message",
+        "consumes": [
+          "application/json;charset=utf-8"
+        ],
+        "produces": [
+          "application/json;charset=utf-8"
+        ],
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Signed"
+            },
+            "in": "body",
+            "name": "body"
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Invalid `body`"
+          },
+          "200": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/node/message/{jobOffer}": {
+      "get": {
+        "summary": "Obtain the job offer from a pointer",
+        "produces": [
+          "application/json;charset=utf-8"
+        ],
+        "parameters": [
+          {
+            "pattern": "^[a-z0-9]*$",
+            "format": "base16",
+            "required": true,
+            "in": "path",
+            "name": "jobOffer",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "404": {
+            "description": "`jobOffer` not found"
+          },
+          "200": {
+            "schema": {
+              "$ref": "#/definitions/JobOffer"
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/node/storage/jobDescription": {
+      "put": {
+        "summary": "Store a new job description in the Storage",
+        "consumes": [
+          "application/octet-stream"
+        ],
+        "produces": [
+          "application/json;charset=utf-8"
+        ],
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/JobDescription"
+            },
+            "in": "body",
+            "name": "body"
+          }
+        ],
+        "responses": {
+          "202": {
+            "schema": {
+              "$ref": "#/definitions/StorageReference"
+            },
+            "description": ""
+          },
+          "400": {
+            "description": "Invalid `body`"
+          }
+        }
+      }
+    },
+    "/node/state/block": {
+      "get": {
+        "summary": "Get the last block pointer",
+        "produces": [
+          "application/json;charset=utf-8"
+        ],
+        "responses": {
+          "200": {
+            "schema": {
+              "$ref": "#/definitions/BlockPointer"
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/node/state/account/{account}": {
+      "get": {
+        "summary": "Get balance information for this account",
+        "produces": [
+          "application/json;charset=utf-8"
+        ],
+        "parameters": [
+          {
+            "pattern": "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$",
+            "format": "byte",
+            "required": true,
+            "in": "path",
+            "name": "account",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "404": {
+            "description": "`account` not found"
+          },
+          "200": {
+            "schema": {
+              "$ref": "#/definitions/Tokens"
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/node/state/account/{account}/{token-kind}": {
+      "get": {
+        "summary": "Get amount of these tokens for this account",
+        "produces": [
+          "application/json;charset=utf-8"
+        ],
+        "parameters": [
+          {
+            "pattern": "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$",
+            "format": "byte",
+            "required": true,
+            "in": "path",
+            "name": "account",
+            "type": "string"
+          },
+          {
+            "required": true,
+            "in": "path",
+            "name": "token-kind",
+            "type": "string",
+            "enum": [
+              "$@"
+            ]
+          }
+        ],
+        "responses": {
+          "404": {
+            "description": "`account` or `token-kind` not found"
+          },
+          "200": {
+            "schema": {
+              "$ref": "#/definitions/TokenCount"
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/node/state/offers/list/open": {
+      "get": {
+        "summary": "Get a list of open job offers",
+        "produces": [
+          "application/json;charset=utf-8"
+        ],
+        "responses": {
+          "200": {
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/MessagePointer"
+              },
+              "type": "array"
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/node/state/submissions/list/for/{proposal}": {
+      "get": {
+        "summary": "Get a list of submissions for this contractor proposal",
+        "produces": [
+          "application/json;charset=utf-8"
+        ],
+        "parameters": [
+          {
+            "pattern": "^[a-z0-9]*$",
+            "format": "base16",
+            "required": true,
+            "in": "path",
+            "name": "proposal",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "404": {
+            "description": "`proposal` not found"
+          },
+          "200": {
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/MessagePointer"
+              },
+              "type": "array"
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/newWallet": {
+      "post": {
+        "summary": "Create a new wallet",
+        "produces": [
+          "application/json;charset=utf-8"
+        ],
+        "responses": {
+          "201": {
+            "schema": {
+              "$ref": "#/definitions/WalletInfoSecret"
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/importWallet": {
+      "put": {
+        "summary": "Import an existing wallet",
+        "consumes": [
+          "application/json;charset=utf-8"
+        ],
+        "produces": [
+          "application/json;charset=utf-8"
+        ],
+        "parameters": [
+          {
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/SecretKey"
+            },
+            "in": "body",
+            "name": "body"
+          }
+        ],
+        "responses": {
+          "202": {
+            "schema": {
+              "$ref": "#/definitions/WalletInfo"
+            },
+            "description": ""
+          },
+          "400": {
+            "description": "Invalid `body`"
+          }
+        }
+      }
+    },
+    "/wallets": {
+      "get": {
+        "summary": "Get a list of accessible wallets",
+        "produces": [
+          "application/json;charset=utf-8"
+        ],
+        "responses": {
+          "200": {
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/PublicKey"
+              },
+              "type": "array"
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/wallets/{account}/info": {
+      "get": {
+        "summary": "Get a general wallet information",
+        "produces": [
+          "application/json;charset=utf-8"
+        ],
+        "parameters": [
+          {
+            "pattern": "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$",
+            "format": "byte",
+            "required": true,
+            "in": "path",
+            "name": "account",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "404": {
+            "description": "`account` not found"
+          },
+          "200": {
+            "schema": {
+              "$ref": "#/definitions/WalletInfo"
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/wallets/{account}/transactions/list": {
+      "get": {
+        "summary": "Get a list of transactions",
+        "produces": [
+          "application/json;charset=utf-8"
+        ],
+        "parameters": [
+          {
+            "pattern": "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$",
+            "format": "byte",
+            "required": true,
+            "in": "path",
+            "name": "account",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "404": {
+            "description": "`account` not found"
+          },
+          "200": {
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/Transaction"
+              },
+              "type": "array"
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/wallets/{account}/transactions/create/{to_address}/{amount}": {
+      "post": {
+        "summary": "Create a new transaction",
+        "produces": [
+          "application/json;charset=utf-8"
+        ],
+        "parameters": [
+          {
+            "pattern": "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$",
+            "format": "byte",
+            "required": true,
+            "in": "path",
+            "name": "account",
+            "type": "string"
+          },
+          {
+            "pattern": "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$",
+            "format": "byte",
+            "required": true,
+            "in": "path",
+            "name": "to_address",
+            "type": "string"
+          },
+          {
+            "maximum": 18446744073709552000,
+            "minimum": 0,
+            "required": true,
+            "in": "path",
+            "name": "amount",
+            "type": "integer"
+          }
+        ],
+        "responses": {
+          "404": {
+            "description": "`account` or `to_address` or `amount` not found"
+          },
+          "201": {
+            "schema": {
+              "$ref": "#/definitions/Transaction"
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/wallets/{account}/offers/publish": {
+      "post": {
+        "summary": "Publish a job offer",
+        "consumes": [
+          "application/json;charset=utf-8"
+        ],
+        "produces": [
+          "application/json;charset=utf-8"
+        ],
+        "parameters": [
+          {
+            "pattern": "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$",
+            "format": "byte",
+            "required": true,
+            "in": "path",
+            "name": "account",
+            "type": "string"
+          },
+          {
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/JobOffer"
+            },
+            "in": "body",
+            "name": "body"
+          }
+        ],
+        "responses": {
+          "404": {
+            "description": "`account` not found"
+          },
+          "400": {
+            "description": "Invalid `body`"
+          },
+          "201": {
+            "schema": {
+              "$ref": "#/definitions/MessagePointer"
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/wallets/{account}/offers/list/created": {
+      "get": {
+        "summary": "Get a list of job offers created by user",
+        "produces": [
+          "application/json;charset=utf-8"
+        ],
+        "parameters": [
+          {
+            "pattern": "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$",
+            "format": "byte",
+            "required": true,
+            "in": "path",
+            "name": "account",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "404": {
+            "description": "`account` not found"
+          },
+          "200": {
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/MessagePointer"
+              },
+              "type": "array"
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/wallets/{account}/submissions/list/for/{offer}": {
+      "get": {
+        "summary": "Get a list of submissions for this job offer",
+        "produces": [
+          "application/json;charset=utf-8"
+        ],
+        "parameters": [
+          {
+            "pattern": "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$",
+            "format": "byte",
+            "required": true,
+            "in": "path",
+            "name": "account",
+            "type": "string"
+          },
+          {
+            "pattern": "^[a-z0-9]*$",
+            "format": "base16",
+            "required": true,
+            "in": "path",
+            "name": "offer",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "404": {
+            "description": "`account` or `offer` not found"
+          },
+          "200": {
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/MessagePointer"
+              },
+              "type": "array"
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/wallets/{account}/submissions/accept/{submission}": {
+      "put": {
+        "summary": "Accept this submission",
+        "produces": [
+          "application/json;charset=utf-8"
+        ],
+        "parameters": [
+          {
+            "pattern": "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$",
+            "format": "byte",
+            "required": true,
+            "in": "path",
+            "name": "account",
+            "type": "string"
+          },
+          {
+            "pattern": "^[a-z0-9]*$",
+            "format": "base16",
+            "required": true,
+            "in": "path",
+            "name": "submission",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "404": {
+            "description": "`account` or `submission` not found"
+          },
+          "202": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/wallets/{account}/offers/list/taken": {
+      "get": {
+        "summary": "Get a list of job offers taken by user",
+        "produces": [
+          "application/json;charset=utf-8"
+        ],
+        "parameters": [
+          {
+            "pattern": "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$",
+            "format": "byte",
+            "required": true,
+            "in": "path",
+            "name": "account",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "404": {
+            "description": "`account` not found"
+          },
+          "200": {
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/MessagePointer"
+              },
+              "type": "array"
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/wallets/{account}/offers/take/{offer}": {
+      "put": {
+        "summary": "Take this offer",
+        "produces": [
+          "application/json;charset=utf-8"
+        ],
+        "parameters": [
+          {
+            "pattern": "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$",
+            "format": "byte",
+            "required": true,
+            "in": "path",
+            "name": "account",
+            "type": "string"
+          },
+          {
+            "pattern": "^[a-z0-9]*$",
+            "format": "base16",
+            "required": true,
+            "in": "path",
+            "name": "offer",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "404": {
+            "description": "`account` or `offer` not found"
+          },
+          "202": {
+            "description": ""
+          }
+        }
+      }
+    },
+    "/wallets/{account}/submissions/submit/{offer}": {
+      "put": {
+        "summary": "Submit a result of work (submission)",
+        "consumes": [
+          "application/json;charset=utf-8"
+        ],
+        "produces": [
+          "application/json;charset=utf-8"
+        ],
+        "parameters": [
+          {
+            "pattern": "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$",
+            "format": "byte",
+            "required": true,
+            "in": "path",
+            "name": "account",
+            "type": "string"
+          },
+          {
+            "pattern": "^[a-z0-9]*$",
+            "format": "base16",
+            "required": true,
+            "in": "path",
+            "name": "offer",
+            "type": "string"
+          },
+          {
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/SubmissionData"
+            },
+            "in": "body",
+            "name": "body"
+          }
+        ],
+        "responses": {
+          "404": {
+            "description": "`account` or `offer` not found"
+          },
+          "202": {
+            "schema": {
+              "$ref": "#/definitions/MessagePointer"
+            },
+            "description": ""
+          },
+          "400": {
+            "description": "Invalid `body`"
+          }
+        }
+      }
+    },
+    "/wallets/{account}/submissions/list": {
+      "get": {
+        "summary": "Get a list of user's submissions",
+        "produces": [
+          "application/json;charset=utf-8"
+        ],
+        "parameters": [
+          {
+            "pattern": "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$",
+            "format": "byte",
+            "required": true,
+            "in": "path",
+            "name": "account",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "404": {
+            "description": "`account` not found"
+          },
+          "200": {
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/MessagePointer"
+              },
+              "type": "array"
+            },
+            "description": ""
+          }
+        }
+      }
+    },
+    "/wallets/{account}/offers/list/finished": {
+      "get": {
+        "summary": "Get a list of job offers done by the user",
+        "produces": [
+          "application/json;charset=utf-8"
+        ],
+        "parameters": [
+          {
+            "pattern": "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$",
+            "format": "byte",
+            "required": true,
+            "in": "path",
+            "name": "account",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "404": {
+            "description": "`account` not found"
+          },
+          "200": {
+            "schema": {
+              "items": {
+                "$ref": "#/definitions/MessagePointer"
+              },
+              "type": "array"
+            },
+            "description": ""
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Signed": {
+      "required": [
+        "sPublicKey",
+        "sSignature",
+        "sData"
+      ],
+      "properties": {
+        "sPublicKey": {
+          "$ref": "#/definitions/PublicKey"
+        },
+        "sSignature": {
+          "$ref": "#/definitions/Signature"
+        },
+        "sData": {
+          "$ref": "#/definitions/Message"
+        }
+      },
+      "type": "object"
+    },
+    "PublicKey": {
+      "example": "WYJsP2L2883QBqEB6zKv4pD4i846QqNNREpudp5VWLY=",
+      "pattern": "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$",
+      "format": "byte",
+      "type": "string"
+    },
+    "Signature": {
+      "example": "35MiSiEaEiZvRhQvNbpfCVmsi9zYdhzCaMCvPoX/HO4dt4TNDJ8sgNFQEydjeWkWIH7NI6q2G0TWt1NmxPbwCA==",
+      "pattern": "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$",
+      "format": "byte",
+      "type": "string"
+    },
+    "Message": {
+      "properties": {
+        "MsgJobOffer": {
+          "$ref": "#/definitions/JobOffer"
+        },
+        "MsgContractorProposal": {
+          "$ref": "#/definitions/ContractorProposal"
+        },
+        "MsgSubmission": {
+          "$ref": "#/definitions/Submission"
+        },
+        "MsgEmployerAcceptance": {
+          "$ref": "#/definitions/EmployerAcceptance"
+        }
+      },
+      "maxProperties": 1,
+      "minProperties": 1,
+      "type": "object"
+    },
+    "JobOffer": {
+      "required": [
+        "descr",
+        "price",
+        "reqs"
+      ],
+      "properties": {
+        "descr": {
+          "$ref": "#/definitions/JobDescription"
+        },
+        "deadline": {
+          "$ref": "#/definitions/UTCTime"
+        },
+        "price": {
+          "$ref": "#/definitions/TokenCount"
+        },
+        "reqs": {
+          "$ref": "#/definitions/Requirements"
+        }
+      },
+      "type": "object"
+    },
+    "StorageReference": {
+      "example": "103b512c203a303a20413b4b483d3e203c353d4f3f",
+      "pattern": "^[a-z0-9]*$",
+      "format": "base16",
+      "type": "string"
+    },
+    "UTCTime": {
+      "example": "2016-07-22T00:00:00Z",
+      "format": "yyyy-mm-ddThh:MM:ssZ",
+      "type": "string"
+    },
+    "Tokens": {
+      "properties": {
+        "$@": {
+          "$ref": "#/definitions/TokenCount"
+        }
+      },
+      "type": "object"
+    },
+    "TokenCount": {
+      "example": 10,
+      "maximum": 18446744073709552000,
+      "minimum": 0,
+      "type": "integer"
+    },
+    "Requirements": {
+      "description": "`RConstant` – a constant value that can be used in expressions described below.\n`RVar` – reference to an input parameter.\n`RLess` – operator `<` for integers.\n`RAnd` – logical `and` of a list of booleans.\n`RVerify` – whether the bytes are signed by a valid signature.",
+      "properties": {
+        "RConst": {
+          "$ref": "#/definitions/Constant"
+        },
+        "RVar": {
+          "maximum": 9223372036854776000,
+          "minimum": -9223372036854776000,
+          "type": "integer"
+        },
+        "RAnd": {
+          "items": {
+            "$ref": "#/definitions/Requirements"
+          },
+          "type": "array"
+        },
+        "RLess": {
+          "minItems": 2,
+          "items": [
+            {
+              "$ref": "#/definitions/Requirements"
+            },
+            {
+              "$ref": "#/definitions/Requirements"
+            }
+          ],
+          "maxItems": 2,
+          "type": "array"
+        },
+        "RVerify": {
+          "minItems": 3,
+          "items": [
+            {
+              "$ref": "#/definitions/Requirements"
+            },
+            {
+              "$ref": "#/definitions/Requirements"
+            },
+            {
+              "$ref": "#/definitions/Requirements"
+            }
+          ],
+          "maxItems": 3,
+          "type": "array"
+        },
+        "RSha256": {
+          "$ref": "#/definitions/Requirements"
+        },
+        "REqBs": {
+          "minItems": 2,
+          "items": [
+            {
+              "$ref": "#/definitions/Requirements"
+            },
+            {
+              "$ref": "#/definitions/Requirements"
+            }
+          ],
+          "maxItems": 2,
+          "type": "array"
+        }
+      },
+      "maxProperties": 1,
+      "minProperties": 1,
+      "type": "object"
+    },
+    "Constant": {
+      "properties": {
+        "RInt": {
+          "maximum": 9223372036854776000,
+          "minimum": -9223372036854776000,
+          "type": "integer"
+        },
+        "RString": {
+          "type": "string"
+        },
+        "RBool": {
+          "type": "boolean"
+        },
+        "RByteString": {
+          "$ref": "#/definitions/RequirementsConstant"
+        },
+        "RSignature": {
+          "$ref": "#/definitions/Signature"
+        },
+        "RPublicKey": {
+          "$ref": "#/definitions/PublicKey"
+        }
+      },
+      "maxProperties": 1,
+      "minProperties": 1,
+      "type": "object"
+    },
+    "RequirementsConstant": {
+      "pattern": "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$",
+      "format": "byte",
+      "type": "string"
+    },
+    "AcceptanceTest": {
+      "type": "boolean"
+    },
+    "Extra": {
+      "pattern": "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$",
+      "format": "byte",
+      "type": "string"
+    },
+    "ContractorProposal": {
+      "required": [
+        "cpJobOfferPtr",
+        "cpProof"
+      ],
+      "properties": {
+        "cpJobOfferPtr": {
+          "$ref": "#/definitions/MessagePointer"
+        },
+        "cpProof": {
+          "additionalProperties": {
+            "$ref": "#/definitions/Proof"
+          },
+          "type": "object"
+        }
+      },
+      "type": "object"
+    },
+    "MessagePointer": {
+      "example": "60a6dbf961241bff301d30d0cc7d7a811909eb8bc4790ab00544b492285c58ad",
+      "pattern": "^[a-z0-9]*$",
+      "format": "base16",
+      "type": "string"
+    },
+    "Proof": {
+      "pattern": "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$",
+      "format": "byte",
+      "type": "string"
+    },
+    "Submission": {
+      "required": [
+        "sProposalPtr",
+        "sData",
+        "sHeight"
+      ],
+      "properties": {
+        "sProposalPtr": {
+          "$ref": "#/definitions/MessagePointer"
+        },
+        "sData": {
+          "$ref": "#/definitions/SubmissionData"
+        },
+        "sHeight": {
+          "$ref": "#/definitions/Height"
+        }
+      },
+      "type": "object"
+    },
+    "SubmissionData": {
+      "pattern": "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$",
+      "format": "byte",
+      "type": "string"
+    },
+    "Height": {
+      "maximum": 18446744073709552000,
+      "minimum": 0,
+      "type": "integer"
+    },
+    "EmployerAcceptance": {
+      "required": [
+        "eaSubmissionPtr"
+      ],
+      "properties": {
+        "eaSubmissionPtr": {
+          "$ref": "#/definitions/MessagePointer"
+        }
+      },
+      "type": "object"
+    },
+    "JobDescription": {
+      "format": "binary",
+      "type": "string"
+    },
+    "BlockPointer": {
+      "example": "60a6dbf961241bff301d30d0cc7d7a811909eb8bc4790ab00544b492285c58ad",
+      "pattern": "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$",
+      "format": "byte",
+      "type": "string"
+    },
+    "WalletInfoSecret": {
+      "required": [
+        "wisPublicKey",
+        "wisSecretKey"
+      ],
+      "properties": {
+        "wisPublicKey": {
+          "$ref": "#/definitions/PublicKey"
+        },
+        "wisSecretKey": {
+          "$ref": "#/definitions/SecretKey"
+        }
+      },
+      "type": "object"
+    },
+    "SecretKey": {
+      "example": "JhCC4sZFI/GF3M9EBZGgJ3ACgVeK9kfbGqK0pePcRXk=",
+      "pattern": "^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$",
+      "format": "byte",
+      "type": "string"
+    },
+    "WalletInfo": {
+      "required": [
+        "wiPublicKey"
+      ],
+      "properties": {
+        "wiPublicKey": {
+          "$ref": "#/definitions/PublicKey"
+        }
+      },
+      "type": "object"
+    },
+    "Transaction": {
+      "required": [
+        "tSender",
+        "tReceiver",
+        "tAmount",
+        "tTimestamp"
+      ],
+      "properties": {
+        "tSender": {
+          "$ref": "#/definitions/PublicKey"
+        },
+        "tReceiver": {
+          "$ref": "#/definitions/PublicKey"
+        },
+        "tAmount": {
+          "$ref": "#/definitions/TokenCount"
+        },
+        "tTimestamp": {
+          "$ref": "#/definitions/UTCTime"
+        }
+      },
+      "type": "object"
+    }
+  }
+}
